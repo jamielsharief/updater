@@ -57,7 +57,6 @@ class RepositoryTest extends TestCase
      */
     public function testSatis()
     {
-        echo file_get_contents('http://127.0.0.1:8000');
         $repository = new Repository('http://127.0.0.1:8000');
         $package = $repository->get('jamielsharief/updater-demo');
         $this->assertInstanceOf(Package::class, $package);
