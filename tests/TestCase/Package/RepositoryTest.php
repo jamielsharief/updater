@@ -13,6 +13,7 @@
 declare(strict_types = 1);
 namespace Updater\Test\TestCase\Package;
 
+use Origin\HttpClient\Http;
 use Updater\Package\Package;
 use PHPUnit\Framework\TestCase;
 use Updater\Package\Repository;
@@ -87,6 +88,8 @@ class RepositoryTest extends TestCase
         $this->assertInstanceOf(Package::class, $package);
         $this->assertTrue($package->has('0.1.0'));
 
+        print_r((new Http())->get($package->url('0.1.0')));
+        
         $this->expectException(ClientErrorException::class);
         $repository->download($package->url('0.1.0'));
     }
