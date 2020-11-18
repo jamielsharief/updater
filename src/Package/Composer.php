@@ -107,7 +107,6 @@ class Composer
     /**
      * Loads composer credentials
      *
-     * @param string $url
      * @return void
      */
     protected function loadAuth(): void

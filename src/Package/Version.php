@@ -24,7 +24,7 @@ class Version
     /**
     * Checks for the next version to be run, so if last update was 1.1.0, then it will update to 1.1.1 before 1.2
     *
-    * @param array $package
+    * @param string $currentVersion
     * @return string|null
     */
     public function next(string $currentVersion, array $list): ? string
