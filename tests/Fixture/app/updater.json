@@ -1,0 +1,8 @@
+{
+    "url": "https://packagist.org",
+    "package": "jamielsharief/updater-demo",
+    "scripts": {
+        "before": [],
+        "after": []
+    }
+}

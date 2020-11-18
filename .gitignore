@@ -1,0 +1,9 @@
+node_modules/
+/composer.lock
+/phpunit.xml
+/vendor
+.env
+.vscode
+.php_cs.cache
+.phpunit.result.cache
+bin/updater.phar

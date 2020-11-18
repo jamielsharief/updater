@@ -1,0 +1,28 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Updater
+ * Copyright 2020 Jamiel Sharief.
+ *
+ * Licensed under The Apache License 2.0
+ * The above copyright notice and this permission notice shall be included in all copies or substantial
+ * portions of the Software.
+ *
+ * @copyright   Copyright (c) Jamiel Sharief
+ * @license     https://opensource.org/licenses/Apache-2.0 Apache License 2.0
+ */
+
+require dirname(__DIR__) . '/src/bootstrap.php';
+
+use Origin\Console\ConsoleApplication;
+use Updater\Console\Command\InitCommand;
+use Updater\Console\Command\UpdateCommand;
+
+$app = new ConsoleApplication();
+$app->name('update');
+$app->description([
+    'Updater - Automatic Application Updater'
+]);
+$app->addCommand('init', InitCommand::class);
+$app->addCommand('update', UpdateCommand::class);
+exit($app->run());

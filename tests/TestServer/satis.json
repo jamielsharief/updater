@@ -1,0 +1,24 @@
+{
+  "name": "dummy",
+  "homepage": "http://localhost:8000",
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/jamielsharief/blockchain"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/jamielsharief/updater-demo"
+    }
+  ],
+  "archive": {
+    "directory": "dist",
+    "absolute-directory": "public/dist",
+    "format": "zip",
+    "skip-dev": true
+  },
+  "require-all": true,
+  "require-dependencies": true,
+  "require-dev-dependencies": false,
+  "output-html": true
+}

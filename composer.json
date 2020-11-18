@@ -1,0 +1,46 @@
+{
+    "name": "jamielsharief/updater",
+    "description": "Automatic software updater",
+    "type": "library",
+    "keywords": ["update","automatic updates","upgrade"],
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Jamiel Sharief",
+            "email": "js@originphp.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Updater\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Updater\\Test\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=7.3.0",
+        "ext-zip": "*",
+        "originphp/http-client": "^2.0",
+        "originphp/validation": "^1.5",
+        "originphp/filesystem": "^2.0",
+        "originphp/zip": "1.3.0",
+        "originphp/console": "3.9.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.2",
+        "phpstan/phpstan": "^0.12.52",
+        "originphp/test-suite": "^3.9"
+    },
+    "bin": [
+        "bin/updater"
+    ],
+    "scripts" : {
+        "build" : [
+            "composer update -q --no-dev",
+            "@php -d phar.readonly=Off bin/build"
+        ]
+    }
+}

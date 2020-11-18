@@ -1,0 +1,43 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Updater
+ * Copyright 2020 Jamiel Sharief.
+ *
+ * Licensed under The Apache License 2.0
+ * The above copyright notice and this permission notice shall be included in all copies or substantial
+ * portions of the Software.
+ *
+ * @copyright   Copyright (c) Jamiel Sharief
+ * @license     https://opensource.org/licenses/Apache-2.0 Apache License 2.0
+ */
+
+$buildRoot = dirname(__DIR__, 1);
+$output = $buildRoot . '/bin/updater.phar';
+
+if (file_exists($output)) {
+    unlink($output);
+}
+
+chdir($buildRoot);
+
+$phar = new Phar($output, 0, 'updater.phar');
+$phar->setSignatureAlgorithm(Phar::SHA1);
+
+$phar->startBuffering();
+$phar->buildFromDirectory($buildRoot, '/\/(src|vendor)\/(.*)\.(php|json)$/i');
+
+// Shebang is not being stripped on PHP 7.4.12, so manually doing this
+$phar->addFromString(
+    'bin/updater',
+    preg_replace('/^#!\/usr\/bin\/env php\R/', '', file_get_contents($buildRoot . '/bin/updater'))
+);
+
+$phar->setStub("#!/usr/bin/env php\n". $phar->createDefaultStub('bin/updater'));
+$phar->stopBuffering();
+
+$phar->compressFiles(Phar::GZ);
+
+chmod($output, 0755);
+
+echo('[OK] bin/updater.phar created' . PHP_EOL);
