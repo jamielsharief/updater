@@ -77,7 +77,7 @@ class RepositoryTest extends TestCase
        
         $link = $repository->download($package->url('0.1.0'));
         //copy($link, dirname(__DIR__, 3) .  '/tmp/download.zip');
-        $this->assertEquals('891ae5bd982048c127584a9a7ca8ba04', hash_file('md5', $link));
+        $this->assertEquals('2d2e554b', hash_file('crc32', $link));
     }
 
     public function testSatisDownloadAuthenticationUnauthorized()
@@ -102,8 +102,8 @@ class RepositoryTest extends TestCase
         $this->assertTrue($package->has('0.1.0'));
 
         $link = $repository->download($package->url('0.1.0'));
-
+       
         //copy($link, dirname(__DIR__, 3) .  '/tmp/download.zip');
-        $this->assertEquals('69756034bcb55f904ffcd8a0a6311cbf', hash_file('md5', $link));
+        $this->assertEquals('7636b283', hash_file('crc32', $link));
     }
 }

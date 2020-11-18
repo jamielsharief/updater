@@ -54,7 +54,7 @@ class UpdateCommandTest extends OriginTestCase
         $this->assertFileExists("{$directory}/updater.lock");
         $this->assertEquals('0.1.0', $lockFile->read()['version']);
 
-        $this->exec("update {$directory}");
+        $this->exec("update {$directory} --verbose");
         $this->assertExitSuccess();
         $this->assertOutputContains('Processed 1 updates');
 
@@ -64,7 +64,7 @@ class UpdateCommandTest extends OriginTestCase
 
         // Check after script was run properly
         $this->assertOutputContains('<white>></white> composer update');
-        $this->assertDirectoryExists("{$directory}/vendor/phpunit/phpunit");
+        $this->assertOutputContains('Loading composer repositories with package information');
 
         // Check lockfile was updated
         $this->assertEquals('0.2.0', $lockFile->read()['version']);
