@@ -139,6 +139,10 @@ class UpdateCommand extends ApplicationCommand
             $this->throwError('HTTP Error', $exception->getMessage());
         }
 
+        if (! isset($package)) {
+            $this->throwError('Unkown Error', 'Error getting package info');
+        }
+
         return $package;
     }
 
