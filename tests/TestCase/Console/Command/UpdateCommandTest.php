@@ -75,7 +75,7 @@ class UpdateCommandTest extends OriginTestCase
      */
     public function testUpdateAll()
     {
-        $fixture = new AppFixture('http://localhost:8000');
+        $fixture = new AppFixture('http://127.0.0.1:8000');
         $directory = $fixture->directory();
         $lockFile = new Json("{$directory}/updater.lock");
        
@@ -103,7 +103,7 @@ class UpdateCommandTest extends OriginTestCase
     public function urlProvider(): array
     {
         return [
-            ['http://localhost:8000'],
+            ['http://127.0.0.1:8000'],
             ['https://packagist.org'],
         ];
     }

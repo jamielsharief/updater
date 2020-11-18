@@ -1,6 +1,6 @@
 {
   "name": "dummy",
-  "homepage": "http://localhost:8000",
+  "homepage": "http://127.0.0.1:8000",
   "repositories": [
     {
       "type": "vcs",
