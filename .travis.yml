@@ -11,6 +11,7 @@ before_install:
   - docker run -d -p 8000:80 satis-dev
 before_script:
   - composer install --prefer-source --no-interaction
+  - composer config -g github-oauth.github.com "$GITHUB_TOKEN"
 script:
   - vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover=clover.xml
 after_script:
