@@ -73,7 +73,7 @@ class RepositoryTest extends TestCase
      */
     public function testSatisDownload(Package $package)
     {
-        $repository = new Repository('http://localhost:8000');
+        $repository = new Repository('http://127.0.0.1:8000');
        
         $link = $repository->download($package->url('0.1.0'));
         //copy($link, dirname(__DIR__, 3) .  '/tmp/download.zip');
@@ -82,7 +82,7 @@ class RepositoryTest extends TestCase
 
     public function testSatisDownloadAuthenticationUnauthorized()
     {
-        $repository = new Repository('http://localhost:8000');
+        $repository = new Repository('http://127.0.0.1:8000');
         $package = $repository->get('jamielsharief/blockchain');
         $this->assertInstanceOf(Package::class, $package);
         $this->assertTrue($package->has('0.1.0'));
@@ -93,7 +93,7 @@ class RepositoryTest extends TestCase
 
     public function testSatisDownloadAuthentication()
     {
-        $repository = new Repository('http://localhost:8000', [
+        $repository = new Repository('http://127.0.0.1:8000', [
             'username' => 'user',
             'password' => '1234'
         ]);
