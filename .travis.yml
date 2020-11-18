@@ -2,11 +2,12 @@ language: php
 php:
   - 7.3
   - 7.4
+  - 'nightly'
 dist: bionic
 services:
   - docker
 before_install:
-  - cd tests/TestServer && docker build -t satis-dev . && cd ..
+  - cd tests/TestServer && docker build -t satis-dev . && cd ../..
   - docker run -d -p 8000:80 satis-dev
 before_script:
   - composer install --prefer-source --no-interaction
