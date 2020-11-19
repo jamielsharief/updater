@@ -118,7 +118,7 @@ $ updater update --all
 
 > This will only upgrade to the next major version if there are no pending updates, and it will not update any versions after the first next major version.
 
-To upgrade to the next major release,.
+To upgrade to the next major release run the `upgrade` command.
 
 ```bash
 $ updater upgrade
