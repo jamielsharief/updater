@@ -131,7 +131,7 @@ class Archive
     }
 
     /**
-     * Close the archive and deletes it
+     * Close the archive
      *
      * @return void
      */

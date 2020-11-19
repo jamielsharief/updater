@@ -2,6 +2,7 @@
 /**
  * Configure PATH Constants and setup the application
  * namespace so that integration testing can work
+ *
  */
 
 define('ROOT', dirname(__DIR__));

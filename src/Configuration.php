@@ -119,8 +119,16 @@ final class Configuration
     /**
      * @return string
      */
-    public function __toString()
+    public function toJson(): string
     {
         return json_encode($this, JSON_PRETTY_PRINT);
+    }
+    
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toJson();
     }
 }

@@ -14,7 +14,7 @@ declare(strict_types = 1);
 namespace Updater\Package;
 
 use Origin\HttpClient\Http;
-use Origin\HttpClient\Exception\HttpClientException;
+use Origin\HttpClient\Exception\ClientErrorException;
 
 class Repository
 {
@@ -99,7 +99,7 @@ class Repository
             }
         }
 
-        throw new HttpClientException('Not Found', 404);
+        throw new ClientErrorException('Not Found', 404);
     }
 
     /**

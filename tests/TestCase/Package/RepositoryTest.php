@@ -13,9 +13,11 @@
 declare(strict_types = 1);
 namespace Updater\Test\TestCase\Package;
 
+use Origin\Zip\Zip;
 use Updater\Package\Package;
 use PHPUnit\Framework\TestCase;
 use Updater\Package\Repository;
+use Origin\HttpClient\Exception\HttpClientException;
 use Origin\HttpClient\Exception\ClientErrorException;
 
 /**
@@ -48,7 +50,7 @@ class RepositoryTest extends TestCase
         $repository = new Repository('https://packagist.org');
 
         $link = $repository->download($package->url('0.1.0'));
-        $this->assertEquals('f90b08592cf091bf82d7b18e30f36b83', hash_file('md5', $link));
+        $this->assertEquals('ab204f71', hash_file('crc32', $link));
     }
 
     /**
@@ -77,17 +79,29 @@ class RepositoryTest extends TestCase
         $repository = new Repository('http://127.0.0.1:8000');
        
         $link = $repository->download($package->url('0.1.0'));
-        //copy($link, dirname(__DIR__, 3) .  '/tmp/download.zip');
-        $this->assertEquals('2d2e554b', hash_file('crc32', $link));
+
+        $zip = (new Zip())->open($link);
+       
+        $meta = $package->get('0.1.0');
+        $this->assertEquals('jamielsharief/updater-demo', $meta['name']);
+
+        $this->assertZIPFileCount(2, $zip);
+        $this->assertZIPHasFiles(['README.md','composer.json'], $zip);
+        $this->assertEquals('fafea3b7', hash('crc32', $zip->get('composer.json')));
     }
 
+    /**
+     * // TODO: auth not working on travis.
+     *
+     * @return void
+     */
     public function testSatisDownloadAuthenticationUnauthorized()
     {
         $repository = new Repository('http://127.0.0.1:8000');
         $package = $repository->get('jamielsharief/blockchain');
         $this->assertInstanceOf(Package::class, $package);
         $this->assertTrue($package->has('0.1.0'));
-
+       
         $this->expectException(ClientErrorException::class);
         $repository->download($package->url('0.1.0'));
     }
@@ -103,8 +117,44 @@ class RepositoryTest extends TestCase
         $this->assertTrue($package->has('0.1.0'));
 
         $link = $repository->download($package->url('0.1.0'));
-       
-        //copy($link, dirname(__DIR__, 3) .  '/tmp/download.zip');
-        $this->assertEquals('7636b283', hash_file('crc32', $link));
+        $zip = (new Zip())->open($link);
+
+        // CRC failing on travisCI so
+        $meta = $package->get('0.1.0');
+        $this->assertEquals('jamielsharief/blockchain', $meta['name']);
+        $this->assertZIPFileCount(17, $zip);
+        $this->assertZIPHasFiles(['src/Blockchain.php'], $zip);
+        $this->assertEquals('0673c4f2', hash('crc32', $zip->get('src/Block.php')));
+    }
+
+    public function testSatisNotFound()
+    {
+        $repository = new Repository('http://127.0.0.1:8000');
+        $this->expectException(HttpClientException::class);
+        $repository->get('foo/bar');
+    }
+
+    protected function assertZIPFileCount(int $count, Zip $zip)
+    {
+        $this->assertCount($count, $zip->list());
+    }
+
+    protected function assertZIPHasFiles(array $files, Zip $zip)
+    {
+        foreach ($files as $file) {
+            $this->assertZIPHasFile($file, $zip);
+        }
+    }
+
+    protected function assertZIPHasFile(string $file, Zip $zip)
+    {
+        $found = false;
+        foreach ($zip->list() as $item) {
+            if ($item['name'] === $file) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
     }
 }

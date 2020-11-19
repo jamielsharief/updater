@@ -13,6 +13,8 @@
 declare(strict_types = 1);
 namespace Updater\Package;
 
+use InvalidArgumentException;
+
 /**
  * Version
  * @see https://semver.org/spec/v2.0.0.html
@@ -105,6 +107,6 @@ class Version
             return (int) $matches[1];
         }
 
-        return null;
+        throw new InvalidArgumentException('Invalid version ' . $version);
     }
 }

@@ -100,7 +100,7 @@ class Package
         $url = $meta['dist']['url'];
 
         $zip = $this->repository->download($url);
-
+       
         $baseFolder = null;
         if (preg_match('/api.github.com/', $url)) {
             $baseFolder = str_replace('/', '-', $meta['name']) . '-' . substr($meta['dist']['reference'], 0, 7);

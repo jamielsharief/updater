@@ -84,7 +84,7 @@ class ApplicationCommand extends Command
         $path = realpath($path);
         if (! $path) {
             $this->io->error('Invalid directory');
-            $this->exit();
+            $this->abort();
         }
 
         return $path;

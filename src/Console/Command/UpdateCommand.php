@@ -20,6 +20,7 @@ use Updater\Package\Composer;
 use Updater\Package\Repository;
 use Origin\HttpClient\Exception\HttpException;
 use Origin\HttpClient\Exception\ConnectionException;
+use Origin\HttpClient\Exception\ClientErrorException;
 
 /**
  * Main command
@@ -100,8 +101,12 @@ class UpdateCommand extends ApplicationCommand
         }
 
         $this->status('Downloading', $updater->package, $nextVersion);
-        $archive = $package->download($nextVersion);
-
+        try {
+            $archive = $package->download($nextVersion);
+        } catch (HttpException $exception) {
+            $this->throwError('HTTP Error', $exception->getMessage());
+        }
+        
         if (! $archive->hasConfig()) {
             $this->throwError('Invalid Package', sprintf("Package '%s' does not have updater.json", $updater->package));
         }
@@ -112,6 +117,8 @@ class UpdateCommand extends ApplicationCommand
         $archive->extract($this->workingDirectory);
 
         $this->runScripts('after', $archive->config());
+
+        $archive->close();
         $archive->delete();
 
         $this->io->out('- Updating lock file');
@@ -129,21 +136,17 @@ class UpdateCommand extends ApplicationCommand
     private function fetchPackageInfo(string $name): Package
     {
         try {
-            $package = $this->repository->get($name);
+            return $this->repository->get($name);
         } catch (ConnectionException $exception) {
             $this->throwError('Connection Error', $exception->getMessage());
-        } catch (HttpException $exception) {
+        } catch (ClientErrorException $exception) {
             if ($exception->getCode() === 404) {
                 $this->throwError('Not Found', "Package '{$name}' could not be found");
             }
-            $this->throwError('HTTP Error', $exception->getMessage());
         }
 
-        if (! isset($package)) {
-            $this->throwError('Unkown Error', 'Error getting package info');
-        }
-
-        return $package;
+        $message = isset($exception) ? $exception->getMessage() : 'Error getting package info';
+        $this->throwError('HTTP Error', $message);
     }
 
     /**

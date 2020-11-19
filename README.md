@@ -55,7 +55,7 @@ Create `updater.json` in your application project folder, and in each release yo
 }
 ```
 
-If you are using a private [satis server](https://getcomposer.org/doc/articles/handling-private-packages.md), change the `url` in the `updater.json` , e.g. `https://www.example.com` and setup authentication for `composer`, if required.
+If you are using a private [satis repository](https://getcomposer.org/doc/articles/handling-private-packages.md), change the `url` in the `updater.json` , e.g. `https://www.example.com` and setup authentication for `composer`, if required.
 
 
 ### Authentication

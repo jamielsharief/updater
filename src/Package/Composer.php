@@ -132,4 +132,14 @@ class Composer
             $this->workingDirectory . '/auth.json'
         ];
     }
+
+    /**
+     * Gets the loaded AUTH settings
+     *
+     * @return array
+     */
+    public function auth(): array
+    {
+        return $this->auth;
+    }
 }

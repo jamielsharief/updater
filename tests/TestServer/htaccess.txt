@@ -1,0 +1,6 @@
+<FilesMatch "(jamielsharief-blockchain.*)\.zip$">
+    AuthUserFile /var/www/.htpasswd
+    AuthType Basic
+    AuthName "Private Package"
+    Require valid-user
+</FilesMatch>

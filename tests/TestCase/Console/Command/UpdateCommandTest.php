@@ -14,6 +14,7 @@ declare(strict_types = 1);
 namespace Updater\Test\TestCase\Console\Command;
 
 use Updater\Utility\Json;
+use Updater\Configuration;
 use Origin\TestSuite\OriginTestCase;
 use Updater\Test\Fixture\AppFixture;
 use Origin\TestSuite\ConsoleIntegrationTestTrait;
@@ -31,11 +32,18 @@ class UpdateCommandTest extends OriginTestCase
 
     public function testNotInitialized()
     {
-        $fixture = new AppFixture('http://localhost:8000');
+        $fixture = new AppFixture('http://127.0.0.1:8000');
 
         $this->exec('update ' . $fixture->directory());
         $this->assertExitError();
         $this->assertErrorContains('Updater not initialized');
+    }
+
+    public function testNormailzePathError()
+    {
+        $this->exec('update /etc/password');
+        $this->assertExitError();
+        $this->assertErrorContains('Invalid directory');
     }
 
     /**
@@ -71,7 +79,7 @@ class UpdateCommandTest extends OriginTestCase
     }
 
     /**
-     * @depends testUpdate
+     * TODO: depends testUpdate
      */
     public function testUpdateAll()
     {
@@ -95,6 +103,94 @@ class UpdateCommandTest extends OriginTestCase
 
         // Check lockfile was updated
         $this->assertEquals('0.3.0', $lockFile->read()['version']);
+
+        return $directory;
+    }
+
+    /**
+     * @depends testUpdateAll
+     *
+     * @param string $directory
+     * @return void
+     */
+    public function testUpdateAllNoMore(string $directory)
+    {
+        $this->exec('update ' . $directory);
+        $this->assertExitSuccess();
+        $this->assertErrorContains('No updates found');
+    }
+
+    /**
+     * Create and initialze
+     *
+     * @return AppFixture
+     */
+    protected function createAppFixture(string $version = '0.1.0')
+    {
+        $fixture = new AppFixture('http://127.0.0.1:8000');
+        $directory = $fixture->directory();
+    
+        $this->exec("init {$directory} --version {$version}");
+        $this->assertExitSuccess();
+        $this->assertOutputContains('Updater initialized');
+
+        return $fixture;
+    }
+
+    /**
+     * 1st release does not include updater.json
+     */
+    public function testInvalidPackage()
+    {
+        $fixture = $this->createAppFixture('0.0.0');
+     
+        $this->exec('update ' . $fixture->directory());
+        $this->assertExitError();
+        $this->assertErrorContains("Package 'jamielsharief/updater-demo' does not have updater.json");
+    }
+
+    public function testFetchPackgeConnectionError()
+    {
+        $fixture = $this->createAppFixture();
+        $filename = $fixture->directory() . '/updater.json';
+
+        // modify fixture to cause error
+        $config = Configuration::fromString(file_get_contents($filename));
+        $config->url = 'https://some-domain-that-does-exist.com';
+        $config->save($filename);
+    
+        $this->exec('update ' . $fixture->directory());
+        $this->assertExitError();
+        $this->assertErrorContains('Connection Error');
+    }
+
+    public function testFetchPackgeError404()
+    {
+        $fixture = $this->createAppFixture();
+        $filename = $fixture->directory() . '/updater.json';
+
+        // modify fixture to cause error
+        $config = Configuration::fromString(file_get_contents($filename));
+        $config->package = 'foo/bar';
+        $config->save($filename);
+    
+        $this->exec('update ' . $fixture->directory());
+        $this->assertExitError();
+        $this->assertErrorContains("<text>Package 'foo/bar' could not be found</text>");
+    }
+
+    public function testDownloadPackage401()
+    {
+        $fixture = $this->createAppFixture();
+        $filename = $fixture->directory() . '/updater.json';
+
+        $config = Configuration::fromString(file_get_contents($filename));
+        $config->package = 'jamielsharief/blockchain';
+        $config->save($filename);
+    
+        $this->exec('update ' . $fixture->directory());
+        $this->assertExitError();
+        $this->assertErrorContains('401 Unauthorized');
     }
 
     /**
