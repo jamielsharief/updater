@@ -79,7 +79,7 @@ class Repository
     {
         $packages = $this->sendGetRequest("{$this->url}/p/{$package}.json");
 
-        return new Package($this, $packages['packages'][$package]);
+        return new Package($this, $package, $packages['packages'][$package]);
     }
 
     /**
@@ -95,7 +95,7 @@ class Repository
         foreach ($includes as $include) {
             $packages = $this->sendGetRequest("{$this->url}/{$include}");
             if (isset($packages['packages'][$package])) {
-                return new Package($this, $packages['packages'][$package]);
+                return new Package($this, $package, $packages['packages'][$package]);
             }
         }
 

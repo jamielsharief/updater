@@ -24,7 +24,7 @@ class PackageTest extends TestCase
     {
         $repository = new Repository('http://127.0.0.1:8000');
 
-        $package = new Package($repository, []);
+        $package = new Package($repository, 'foo/bar', []);
         $this->expectException(InvalidArgumentException::class);
         $package->get('1.0.0');
     }

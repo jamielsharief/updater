@@ -146,7 +146,7 @@ class UpdateCommandTest extends OriginTestCase
      
         $this->exec('update ' . $fixture->directory());
         $this->assertExitError();
-        $this->assertErrorContains("Package 'jamielsharief/updater-demo' does not have updater.json");
+        $this->assertErrorContains('Package does not have updater.json');
     }
 
     public function testFetchPackgeConnectionError()

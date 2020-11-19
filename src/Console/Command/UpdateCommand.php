@@ -14,26 +14,11 @@ declare(strict_types = 1);
 namespace Updater\Console\Command;
 
 use Updater\Configuration;
-use Updater\Package\Package;
-use Updater\Package\Version;
-use Updater\Package\Composer;
-use Updater\Package\Repository;
-use Origin\HttpClient\Exception\HttpException;
-use Origin\HttpClient\Exception\ConnectionException;
-use Origin\HttpClient\Exception\ClientErrorException;
 
-/**
- * Main command
- */
 class UpdateCommand extends ApplicationCommand
 {
     protected $name = 'update';
     protected $description = 'Updates the installation';
-
-    /**
-     * @var \Updater\Package\Repository
-     */
-    protected $repository;
 
     /**
      * Initialize Hook
@@ -58,16 +43,12 @@ class UpdateCommand extends ApplicationCommand
      */
     protected function execute(): void
     {
-        $config = $this->loadConfiguration();
+        $updater = $this->loadConfiguration();
 
-        if (! $this->initialized()) {
-            $this->throwError('Updater not initialized', 'Please run <green>updater init</green> to initialize the project.');
-        }
-
-        $this->repository = new Repository($config->url, $this->loadCredentials($config->url));
+        $this->loadRepository($updater);
 
         $count = 0;
-        while ($this->process($config)) {
+        while ($this->process($updater)) {
             $count ++;
             if ($this->options('all') === false) {
                 break;
@@ -95,126 +76,17 @@ class UpdateCommand extends ApplicationCommand
 
         $this->status('Checking for updates', $updater->package, $lock['version']);
         $package = $this->fetchPackageInfo($updater->package);
+
         $nextVersion = $package->nextVersion($lock['version']);
         if (! $nextVersion) {
             return false;
         }
 
         $this->status('Downloading', $updater->package, $nextVersion);
-        try {
-            $archive = $package->download($nextVersion);
-        } catch (HttpException $exception) {
-            $this->throwError('HTTP Error', $exception->getMessage());
-        }
-        
-        if (! $archive->hasConfig()) {
-            $this->throwError('Invalid Package', sprintf("Package '%s' does not have updater.json", $updater->package));
-        }
+        $archive = $this->fetchArchive($package, $nextVersion);
 
-        $this->runScripts('before', $archive->config());
-
-        $this->status('Extracting', $updater->package, $nextVersion);
-        $archive->extract($this->workingDirectory);
-
-        $this->runScripts('after', $archive->config());
-
-        $archive->close();
-        $archive->delete();
-
-        $this->io->out('- Updating lock file');
-        $this->updateLockFile($nextVersion);
+        $this->processArchive($archive);
 
         return true;
-    }
-
-    /**
-     * Starts the check for updates process, and returns the package meta
-     *
-     * @param string $name
-     * @return \Updater\Package\Package
-     */
-    private function fetchPackageInfo(string $name): Package
-    {
-        try {
-            return $this->repository->get($name);
-        } catch (ConnectionException $exception) {
-            $this->throwError('Connection Error', $exception->getMessage());
-        } catch (ClientErrorException $exception) {
-            if ($exception->getCode() === 404) {
-                $this->throwError('Not Found', "Package '{$name}' could not be found");
-            }
-        }
-
-        $message = isset($exception) ? $exception->getMessage() : 'Error getting package info';
-        $this->throwError('HTTP Error', $message);
-    }
-
-    /**
-     * @param string $version
-     * @return void
-     */
-    private function updateLockFile(string $version): void
-    {
-        $lock['version'] = $version;
-        $lock['modified'] = date('Y-m-d H:i:s');
-       
-        if (! $this->lockFile->save($lock)) {
-            $this->throwError('Unable to write to updater.json');
-        }
-    }
-
-    /**
-     * Executes the before and after scripts
-     *
-     * @param string $type
-     * @param \Updater\Configuration $config
-     * @return void
-     */
-    private function runScripts(string $type, Configuration $config): void
-    {
-        $this->io->out("- Running <yellow>{$type}</yellow> scripts");
-        foreach ($config->scripts($type) as $script) {
-            $this->io->out(" <white>></white> {$script}");
-            $this->debug($this->executeCommand($script));
-        }
-    }
-
-    /**
-     * Executes a script or command
-     *
-     * @param string $command
-     * @return string|null
-     */
-    protected function executeCommand(string $command): ?string
-    {
-        return shell_exec("cd {$this->workingDirectory} && {$command} 2>&1");
-    }
-
-    /**
-     * Displays a status message for a package/version etc
-     *
-     * @param string $message
-     * @param string $package
-     * @param string $version
-     * @return void
-     */
-    private function status(string $message, string $package, string $version): void
-    {
-        $this->io->out(
-            sprintf('- <green>%s</green> <white>%s</white> (<yellow>%s</yellow>)', $message, $package, $version)
-        );
-    }
-
-    /**
-     * Loads composer credentials
-     *
-     * @param string $url
-     * @return array
-     */
-    private function loadCredentials(string $url): array
-    {
-        return (new Composer($this->workingDirectory))->credentials(
-            parse_url($url, PHP_URL_HOST)
-        );
     }
 }

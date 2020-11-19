@@ -15,7 +15,14 @@ namespace Updater\Console\Command;
 
 use Updater\Utility\Json;
 use Updater\Configuration;
+use Updater\Package\Archive;
+use Updater\Package\Package;
+use Updater\Package\Composer;
+use Updater\Package\Repository;
 use Origin\Console\Command\Command;
+use Origin\HttpClient\Exception\HttpException;
+use Origin\HttpClient\Exception\ConnectionException;
+use Origin\HttpClient\Exception\ClientErrorException;
 
 class ApplicationCommand extends Command
 {
@@ -28,6 +35,11 @@ class ApplicationCommand extends Command
      * @var \Updater\Utility\Json
      */
     protected $lockFile;
+
+    /**
+     * @var \Updater\Package\Repository
+     */
+    protected $repository;
 
     /**
      * @return string
@@ -95,7 +107,7 @@ class ApplicationCommand extends Command
      *
      * @return \Updater\Configuration
      */
-    protected function loadConfiguration(string $path = null): Configuration
+    protected function loadConfiguration(): Configuration
     {
         $path = $this->configurationPath();
 
@@ -104,6 +116,155 @@ class ApplicationCommand extends Command
         }
 
         return Configuration::fromString(file_get_contents($path));
+    }
+
+    /**
+    * Loads composer credentials
+    *
+    * @param string $url
+    * @return array
+    */
+    protected function loadCredentials(string $url): array
+    {
+        return (new Composer($this->workingDirectory))->credentials(
+            parse_url($url, PHP_URL_HOST)
+        );
+    }
+
+    /**
+    * Displays a status message for a package/version etc
+    *
+    * @param string $message
+    * @param string $package
+    * @param string $version
+    * @return void
+    */
+    protected function status(string $message, string $package, string $version): void
+    {
+        $this->io->out(
+            sprintf('- <green>%s</green> <white>%s</white> (<yellow>%s</yellow>)', $message, $package, $version)
+        );
+    }
+
+    /**
+     * Starts the check for updates process, and returns the package meta
+     *
+     * @param string $name
+     * @return \Updater\Package\Package
+     */
+    protected function fetchPackageInfo(string $name): Package
+    {
+        try {
+            return $this->repository->get($name);
+        } catch (ConnectionException $exception) {
+            $this->throwError('Connection Error', $exception->getMessage());
+        } catch (ClientErrorException $exception) {
+            if ($exception->getCode() === 404) {
+                $this->throwError('Not Found', "Package '{$name}' could not be found");
+            }
+        }
+
+        $message = isset($exception) ? $exception->getMessage() : 'Error getting package info';
+        $this->throwError('HTTP Error', $message);
+    }
+
+    /**
+     * Archive handler
+     *
+     * @param \Updater\Package\Archive $archive
+     * @return void
+     */
+    protected function processArchive(Archive $archive): void
+    {
+        $this->runScripts('before', $archive->config());
+
+        $this->status('Extracting', $archive->package(), $archive->version());
+        $archive->extract($this->workingDirectory);
+
+        $this->runScripts('after', $archive->config());
+
+        $archive->close();
+        $archive->delete();
+
+        $this->io->out('- Updating lock file');
+        $this->updateLockFile($archive->version());
+    }
+
+    /**
+     * Gets the version archive
+     *
+     * @param \Updater\Package\Package $package
+     * @param string $version
+     * @return \Updater\Package\Archive
+     */
+    protected function fetchArchive(Package $package, string $version): Archive
+    {
+        try {
+            $archive = $package->download($version);
+        } catch (HttpException $exception) {
+            $this->throwError('HTTP Error', $exception->getMessage());
+        }
+        
+        if (! $archive->hasConfig()) {
+            $this->throwError('Invalid Package', 'Package does not have updater.json');
+        }
+
+        return $archive;
+    }
+
+    /**
+     * @param string $version
+     * @return void
+     */
+    protected function updateLockFile(string $version): void
+    {
+        $lock['version'] = $version;
+        $lock['modified'] = date('Y-m-d H:i:s');
+       
+        if (! $this->lockFile->save($lock)) {
+            $this->throwError('Unable to write to updater.json');
+        }
+    }
+
+    /**
+     * Executes the before and after scripts
+     *
+     * @param string $type
+     * @param \Updater\Configuration $config
+     * @return void
+     */
+    protected function runScripts(string $type, Configuration $config): void
+    {
+        $this->io->out("- Running <yellow>{$type}</yellow> scripts");
+        foreach ($config->scripts($type) as $script) {
+            $this->io->out(" <white>></white> {$script}");
+            $this->debug($this->executeCommand($script));
+        }
+    }
+
+    /**
+     * Executes a script or command
+     *
+     * @param string $command
+     * @return string|null
+     */
+    protected function executeCommand(string $command): ?string
+    {
+        return shell_exec("cd {$this->workingDirectory} && {$command} 2>&1");
+    }
+
+    /**
+     * Loads the REPO
+     *
+     * @param \Updater\Configuration $config
+     * @return void
+     */
+    protected function loadRepository(Configuration $config): void
+    {
+        if (! $this->initialized()) {
+            $this->throwError('Updater not initialized', 'Please run <green>updater init</green> to initialize the project.');
+        }
+        $this->repository = new Repository($config->url, $this->loadCredentials($config->url));
     }
 
     /**

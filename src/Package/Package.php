@@ -21,6 +21,11 @@ use InvalidArgumentException;
 class Package
 {
     /**
+     * @var string
+     */
+    private $name;
+
+    /**
      * @var array
      */
     private $data = [];
@@ -34,9 +39,10 @@ class Package
      * @param Repository $repository
      * @param array $package
      */
-    public function __construct(Repository $repository, array $package)
+    public function __construct(Repository $repository, string $name, array $package)
     {
         $this->repository = $repository;
+        $this->name = $name;
         $this->data = $package;
     }
 
@@ -49,6 +55,14 @@ class Package
     public function has(string $version): bool
     {
         return isset($this->data[$version]);
+    }
+
+    /**
+     * @return string
+     */
+    public function name(): string
+    {
+        return $this->name;
     }
 
     /**
@@ -106,7 +120,7 @@ class Package
             $baseFolder = str_replace('/', '-', $meta['name']) . '-' . substr($meta['dist']['reference'], 0, 7);
         }
 
-        return new Archive($zip, ['baseFolder' => $baseFolder]);
+        return new Archive($zip, ['baseFolder' => $baseFolder,'package' => $this->name, 'version' => $version]);
     }
 
     /**
@@ -118,5 +132,16 @@ class Package
     public function nextVersion(string $currentVersion): ?string
     {
         return (new Version())->next($currentVersion, $this->releases());
+    }
+
+    /**
+     * Gets the next major version for this package
+     *
+     * @param string $currentVersion
+     * @return string|null
+     */
+    public function nextMajorVersion(string $currentVersion): ?string
+    {
+        return (new Version())->nextMajor($currentVersion, $this->releases());
     }
 }

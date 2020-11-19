@@ -48,12 +48,22 @@ class Archive
     private $baseFolder;
 
     /**
+     * @var string|null
+     */
+    private $version;
+
+    /**
+     * @var string|null
+     */
+    private $package;
+
+    /**
      * @param string $path
      * @param array $options
      */
     public function __construct(string $path, array $options = [])
     {
-        $options += ['baseFolder' => null];
+        $options += ['baseFolder' => null,'package' => null, 'version' => null];
         
         $this->zip = new Zip();
         
@@ -61,6 +71,29 @@ class Archive
       
         $this->zip->open($path);
         $this->baseFolder = $options['baseFolder'];
+
+        $this->version = $options['version'];
+        $this->package = $options['package'];
+    }
+
+    /**
+     * Gets the version for this archive
+     *
+     * @return string|null
+     */
+    public function version(): ? string
+    {
+        return $this->version;
+    }
+
+    /**
+    * Gets the package name for this archive
+    *
+    * @return string|null
+    */
+    public function package(): ? string
+    {
+        return $this->package;
     }
 
     /**
