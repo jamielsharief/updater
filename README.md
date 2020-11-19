@@ -124,7 +124,7 @@ To upgrade to the next major release run the `upgrade` command.
 $ updater upgrade
 ```
 
-## Demo
+## Demonstration
 
 > This demo assumes you have downloaded the source of `updater` and you are going to download the source of `updater-demo` and place this in the demo subfolder.
 
@@ -159,17 +159,9 @@ Then run the `update` command to get the next available update
 $ bin/updater update demo
 ```
 
-## Building the Updater.phar
+## Development/Testing
 
-To build the `bin/updater.phar` run the following command
-
-```bash
-$ composer run-script build
-```
-
-## Testing
-
-To setup for testing you need [Docker](https://docs.docker.com/get-docker/), and build the image. This will create a small web sever with the satis repository.
+To setup for testing you need have [Docker](https://docs.docker.com/get-docker/) installed. When you build the container it will create a small web sever with the satis repository.
 
 ```bash
 $ cd tests/TestServer
