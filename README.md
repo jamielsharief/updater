@@ -38,7 +38,7 @@ $ cd updater
 $ composer run-script build
 ```
 
-The composer script will create `bin/updater.phar`, once this has completed you can copy this into your application `bin` folder.
+The composer script will create `bin/updater.phar`, you can copy this into your application `bin` folder or if you want to install globally copy to `/usr/local/bin`, and rename it to just `updater`.
 
 ## Usage
 
