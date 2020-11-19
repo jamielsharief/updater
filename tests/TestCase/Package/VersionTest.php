@@ -25,6 +25,12 @@ class VersionTest extends TestCase
         $this->assertEquals('1.2.1', $version->next('1.2.0', ['1.2','1.2.1','1.0','1.1.0']));
     }
 
+    public function testNextNone()
+    {
+        $version = new Version();
+        $this->assertNull($version->next('1.2.0', ['1.0.0','1.1.0','1.1.1','1.1.2','1.2.0-beta','1.2.0','2.0.0']));
+    }
+
     public function testNextMajor()
     {
         $version = new Version();
