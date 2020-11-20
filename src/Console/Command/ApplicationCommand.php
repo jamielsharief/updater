@@ -154,6 +154,8 @@ class ApplicationCommand extends Command
      */
     protected function fetchPackageInfo(string $name): Package
     {
+        $message = 'Error getting package info';
+
         try {
             return $this->repository->get($name);
         } catch (ConnectionException $exception) {
@@ -162,9 +164,8 @@ class ApplicationCommand extends Command
             if ($exception->getCode() === 404) {
                 $this->throwError('Not Found', "Package '{$name}' could not be found");
             }
+            $message = $exception->getMessage();
         }
-
-        $message = isset($exception) ? $exception->getMessage() : 'Error getting package info';
         $this->throwError('HTTP Error', $message);
     }
 
