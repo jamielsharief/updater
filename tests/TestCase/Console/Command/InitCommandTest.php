@@ -57,4 +57,22 @@ class InitCommandTest extends OriginTestCase
 
         return $directory;
     }
+
+    public function testRequriesAuth()
+    {
+        // create fixture that requires auth
+        $directory = sys_get_temp_dir() . '/' . uniqid();
+        mkdir($directory, 0775);
+        $json = '{"url":"http://127.0.0.1:8000","package":"jamielsharief/blockchain","scripts":{"before":[],"after":[]}}';
+        file_put_contents($directory. '/updater.json', $json);
+
+        $this->exec("init {$directory} --version 0.1.0", ['foo','bar']);
+
+        $this->assertOutputContains('Updater initialized');
+        $this->assertErrorContains('Authentication required');
+        
+        $authPath = $directory. '/auth.json';
+        $this->assertFileExists($authPath);
+        $this->assertEquals('1a9aea843137812979fff0d667e196f6', hash_file('md5', $authPath));
+    }
 }
