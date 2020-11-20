@@ -21,6 +21,8 @@ if (file_exists($output)) {
 
 chdir($buildRoot);
 
+shell_exec('composer update -q --no-dev');
+
 $phar = new Phar($output, 0, 'updater.phar');
 $phar->setSignatureAlgorithm(Phar::SHA1);
 

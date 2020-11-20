@@ -36,11 +36,5 @@
     },
     "bin": [
         "bin/updater"
-    ],
-    "scripts" : {
-        "build" : [
-            "composer update -q --no-dev",
-            "@php -d phar.readonly=Off bin/build"
-        ]
-    }
+    ]
 }
