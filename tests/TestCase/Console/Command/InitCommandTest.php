@@ -72,7 +72,8 @@ class InitCommandTest extends OriginTestCase
         $this->assertErrorContains('Authentication required');
         
         $authPath = $directory. '/auth.json';
+        
         $this->assertFileExists($authPath);
-        $this->assertEquals('1a9aea843137812979fff0d667e196f6', hash_file('md5', $authPath));
+        $this->assertEquals('d6af7cf24862273736825c1ce495ffb3', hash_file('md5', $authPath));
     }
 }
