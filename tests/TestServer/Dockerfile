@@ -66,6 +66,7 @@ WORKDIR /var/www
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN composer install --no-interaction
 
-RUN chmod a+x build.sh && ./build.sh
+RUN chmod a+x build.sh 
+RUN ./build.sh
 
 CMD ["/usr/sbin/apache2ctl", "-DFOREGROUND"]
