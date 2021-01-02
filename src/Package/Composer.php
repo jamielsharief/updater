@@ -80,7 +80,7 @@ class Composer
      */
     public function composerDirectory(): string
     {
-        return $this->homeDirectory() . '/.composer';
+        return $this->homeDirectory() . '/.config/.composer';
     }
 
     /**
