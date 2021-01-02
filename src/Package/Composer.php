@@ -76,14 +76,6 @@ class Composer
     }
 
     /**
-     * @return string
-     */
-    public function composerDirectory(): string
-    {
-        return $this->homeDirectory() . '/.config/.composer';
-    }
-
-    /**
      * Checks auth.json details for a domain
      *
      * @example To create from the command line
@@ -123,12 +115,15 @@ class Composer
     }
 
     /**
+     * Loads the possible locations where auth files can be
+     *
      * @return array
      */
     protected function authFiles(): array
     {
         return  [
-            $this-> composerDirectory() . '/auth.json',
+            $this->homeDirectory() . '/.composer/auth.json',
+            $this->homeDirectory() . '/.config/.composer/auth.json',
             $this->workingDirectory . '/auth.json'
         ];
     }
