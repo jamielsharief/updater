@@ -187,8 +187,10 @@ class ApplicationCommand extends Command
         $archive->close();
         $archive->delete();
 
-        $this->io->out('- Updating lock file');
-        $this->updateLockFile($archive->version());
+        if ($this->options('dev') === false) {
+            $this->io->out('- Updating lock file');
+            $this->updateLockFile($archive->version());
+        }
     }
 
     /**

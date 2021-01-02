@@ -74,6 +74,16 @@ class Package
     }
 
     /**
+     * Gets the development branch
+     *
+     * @return string
+     */
+    public function dev(): string
+    {
+        return isset($this->data['dev-main']) ? 'dev-main' : 'dev-master';
+    }
+
+    /**
      * Gets the URL for the ZIP archive
      *
      * @param string $version

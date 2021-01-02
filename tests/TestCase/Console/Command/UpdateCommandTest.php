@@ -118,6 +118,28 @@ class UpdateCommandTest extends OriginTestCase
         $this->exec('update ' . $directory);
         $this->assertExitSuccess();
         $this->assertErrorContains('No updates found');
+
+        return $directory;
+    }
+
+    /**
+    * @depends testUpdateAllNoMore
+    *
+    * @param string $directory
+    * @return void
+    */
+    public function testUpdateFromDev(string $directory)
+    {
+        $lockFile = new Json("{$directory}/updater.lock");
+        $this->assertEquals('0.3.0', $lockFile->read()['version']);
+        
+        $this->exec("update {$directory} --dev");
+        $this->assertExitSuccess();
+        $this->assertOutputContains('<green>Downloading</green> <white>jamielsharief/updater-demo</white> (<yellow>dev-main</yellow>)');
+        $this->assertOutputContains('Processed 1 updates');
+     
+        // check lockfile was not adjusted
+        $this->assertEquals('0.3.0', $lockFile->read()['version']);
     }
 
     /**

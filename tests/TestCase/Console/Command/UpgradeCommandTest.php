@@ -13,6 +13,7 @@
 declare(strict_types = 1);
 namespace Updater\Test\TestCase\Console\Command;
 
+use Updater\Utility\Json;
 use Origin\TestSuite\OriginTestCase;
 use Updater\Test\Fixture\AppFixture;
 use Origin\TestSuite\ConsoleIntegrationTestTrait;
@@ -88,5 +89,26 @@ class UpgradeCommandTest extends OriginTestCase
         $this->assertErrorContains('No upgrades found');
 
         return $fixture;
+    }
+
+    /**
+    * @depends testUpgradeNoUpgrades
+    *
+    * @param AppFixture $fixture
+    * @return void
+    */
+    public function testUpgradeFromDev(AppFixture $fixture)
+    {
+        $directory = $fixture->directory();
+        $lockFile = new Json("{$directory}/updater.lock");
+        $this->assertEquals('1.0.0', $lockFile->read()['version']);
+
+        $this->exec("upgrade {$directory} --dev");
+        $this->assertExitSuccess();
+        $this->assertOutputContains('<green>Downloading</green> <white>jamielsharief/updater-demo</white> (<yellow>dev-main</yellow>)');
+        $this->assertOutputContains('Application upgraded');
+     
+        // check lockfile was not adjusted
+        $this->assertEquals('1.0.0', $lockFile->read()['version']);
     }
 }

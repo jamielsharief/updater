@@ -36,6 +36,11 @@ class UpdateCommand extends ApplicationCommand
             'description' => 'Downloads and processes all available updates',
             'type' => 'boolean'
         ]);
+
+        $this->addOption('dev', [
+            'description' => 'Updates from the development branch',
+            'type' => 'boolean'
+        ]);
     }
 
     /**
@@ -78,6 +83,11 @@ class UpdateCommand extends ApplicationCommand
         $package = $this->fetchPackageInfo($updater->package);
 
         $nextVersion = $package->nextVersion($lock['version']);
+
+        if (! $nextVersion && $this->options('dev')) {
+            $nextVersion = $package->dev();
+        }
+        
         if (! $nextVersion) {
             return false;
         }

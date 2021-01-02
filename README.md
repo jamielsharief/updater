@@ -118,6 +118,12 @@ $ updater update --all
 
 > You can use the `--verbose` option to see the output of the scripts, if any
 
+You can test using the `dev-master` or `dev-main` branch and the lock file will not be adjusted. You can run this as many times as you need.
+
+```bash
+$ updater update --dev
+```
+
 ### Upgrading
 
 > This will only upgrade to the next major version if there are no pending updates, and it will not update any versions after the first next major version.
@@ -126,6 +132,14 @@ To upgrade to the next major release run the `upgrade` command.
 
 ```bash
 $ updater upgrade
+```
+
+> You can use the `--verbose` option to see the output of the scripts, if any
+
+You can test using the `dev-master` or `dev-main` branch and the lock file will not be adjusted. You can run this as many times as you need.
+
+```bash
+$ updater upgrade --dev
 ```
 
 ## Demonstration
