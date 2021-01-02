@@ -106,9 +106,11 @@ class InitCommand extends ApplicationCommand
         $auth = new Json($this->workingDirectory . '/auth.json');
 
         $auth->save([
-            parse_url($updater->url, PHP_URL_HOST) => [
-                'username' => $this->io->ask('username'),
-                'password' => $this->io->ask('password')
+            'http-basic' => [
+                parse_url($updater->url, PHP_URL_HOST) => [
+                    'username' => $this->io->ask('username'),
+                    'password' => $this->io->ask('password')
+                ]
             ]
         ]);
     }
