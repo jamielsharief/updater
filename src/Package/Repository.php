@@ -34,11 +34,6 @@ class Repository
     private $password = null;
 
     /**
-     * @var \Origin\HttpClient\Http
-     */
-    private $http;
-
-    /**
      * @param string $url
      * @param array $options The following options keys are supported:
      *  - username: http-basic username
@@ -50,10 +45,18 @@ class Repository
 
         $this->url = rtrim($url, '/');
 
-        $this->username = $options['username'];
-        $this->password = $options['password'];
-        
-        $this->http = new Http($this->httpOptions());
+        $this->setCredentials($options['username'], $options['password']);
+    }
+
+    /**
+     * @param string|null $username
+     * @param string|null $password
+     * @return void
+     */
+    public function setCredentials(?string $username, ?string $password): void
+    {
+        $this->username = $username;
+        $this->password = $password;
     }
 
     /**
@@ -141,11 +144,21 @@ class Repository
      * @param array $options
      * @return array|null
      */
-    protected function sendGetRequest(string $url, array $options = []): ? array
+    private function sendGetRequest(string $url, array $options = []): ? array
     {
-        $response = $this->http->get($url, $options);
+        $response = $this->http()->get($url, $options);
 
         return $response->ok() ? $response->json() : null;
+    }
+
+    /**
+     * Gets the HTTP client with username and password if set
+     *
+     * @return Http
+     */
+    private function http(): Http
+    {
+        return new Http($this->httpOptions());
     }
 
     /**

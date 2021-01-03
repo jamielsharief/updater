@@ -6,7 +6,6 @@
 
 define('ROOT', dirname(__DIR__));
 define('APP', ROOT . '/src');
-define('DS', DIRECTORY_SEPARATOR); // Required for debugging
 
 require ROOT . '/vendor/autoload.php';
 

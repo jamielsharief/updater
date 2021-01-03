@@ -1,6 +1,6 @@
 {
     "name": "jamielsharief/updater",
-    "description": "Automatic software updater",
+    "description": "Application updates and upgrades",
     "type": "library",
     "keywords": ["update","automatic updates","upgrade"],
     "license": "Apache-2.0",
@@ -26,8 +26,8 @@
         "originphp/http-client": "^2.0",
         "originphp/validation": "^1.5",
         "originphp/filesystem": "^2.0",
-        "originphp/zip": "1.3.0",
-        "originphp/console": "3.9.1"
+        "originphp/zip": "^1.3",
+        "originphp/console": "^3.11"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.2",

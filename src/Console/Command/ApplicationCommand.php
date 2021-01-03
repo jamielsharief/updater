@@ -166,6 +166,7 @@ class ApplicationCommand extends Command
             }
             $message = $exception->getMessage();
         }
+       
         $this->throwError('HTTP Error', $message);
     }
 
@@ -205,6 +206,11 @@ class ApplicationCommand extends Command
         try {
             $archive = $package->download($version);
         } catch (HttpException $exception) {
+            if (! $this->options('no-interaction') && $exception->getCode() === 401) {
+                $this->askForCredentials($this->loadConfiguration());
+
+                return $this->fetchArchive($package, $version);
+            }
             $this->throwError('HTTP Error', $exception->getMessage());
         }
         
@@ -268,6 +274,33 @@ class ApplicationCommand extends Command
             $this->throwError('Updater not initialized', 'Please run <green>updater init</green> to initialize the project.');
         }
         $this->repository = new Repository($config->url, $this->loadCredentials($config->url));
+    }
+
+    /**
+        * @param \Updater\Configuration $updater
+        * @return void
+        */
+    protected function askForCredentials(Configuration $updater): void
+    {
+        $auth = new Json($this->workingDirectory . '/auth.json');
+        $host = parse_url($updater->url, PHP_URL_HOST);
+
+        $this->io->nl();
+        $this->io->error('Authentication required');
+        
+        $username = $this->io->ask('username');
+        $password = $this->io->askSecret('password');
+        
+        $auth->save([
+            'http-basic' => [
+                $host => [
+                    'username' => $username,
+                    'password' => $password
+                ]
+            ]
+        ]);
+
+        $this->repository->setCredentials($username, $password);
     }
 
     /**

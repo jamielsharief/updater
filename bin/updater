@@ -22,7 +22,7 @@ use Updater\Console\Command\UpgradeCommand;
 $app = new ConsoleApplication();
 $app->name('update');
 $app->description([
-    'Updater - Automatic Application Updater'
+    'Updater - Software updates'
 ]);
 $app->addCommand('init', InitCommand::class);
 $app->addCommand('update', UpdateCommand::class);

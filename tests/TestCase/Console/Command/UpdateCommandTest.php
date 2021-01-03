@@ -210,7 +210,7 @@ class UpdateCommandTest extends OriginTestCase
         $config->package = 'jamielsharief/blockchain';
         $config->save($filename);
     
-        $this->exec('update ' . $fixture->directory());
+        $this->exec('update ' . $fixture->directory() . ' --no-interaction');
         $this->assertExitError();
         $this->assertErrorContains('401 Unauthorized');
     }

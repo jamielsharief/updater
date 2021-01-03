@@ -13,7 +13,6 @@
 declare(strict_types = 1);
 namespace Updater\Console\Command;
 
-use Updater\Utility\Json;
 use Updater\Configuration;
 use Updater\Package\Version;
 use Updater\Package\Repository;
@@ -56,10 +55,7 @@ class InitCommand extends ApplicationCommand
             $version = $this->io->ask('What version number would like to start at, e.g. 1.0.0?');
         }
         
-        if ($this->requiresAuthentication($updater)) {
-            $this->io->error('Authentication required');
-            $this->askForCredentials($updater);
-        }
+        $this->askForCredentialsIfNeeded($updater);
 
         $this->lockFile->save([
             'version' => $version,
@@ -68,6 +64,21 @@ class InitCommand extends ApplicationCommand
         ]);
 
         $this->io->success('Updater initialized');
+    }
+
+    /**
+     * Checks if username/password is required, and then checks if correct, if not
+     * it will ask again.
+     *
+     * @param Configuration $updater
+     * @return void
+     */
+    private function askForCredentialsIfNeeded(Configuration $updater)
+    {
+        if ($this->requiresAuthentication($updater)) {
+            $this->askForCredentials($updater);
+            $this->askForCredentialsIfNeeded($updater);
+        }
     }
 
     /**
@@ -93,25 +104,5 @@ class InitCommand extends ApplicationCommand
         }
 
         return $needsAuthentication;
-    }
-
-    /**
-     * @param \Updater\Configuration $updater
-     * @return void
-     */
-    protected function askForCredentials(Configuration $updater): void
-    {
-        $updater = $this->loadConfiguration();
-
-        $auth = new Json($this->workingDirectory . '/auth.json');
-
-        $auth->save([
-            'http-basic' => [
-                parse_url($updater->url, PHP_URL_HOST) => [
-                    'username' => $this->io->ask('username'),
-                    'password' => $this->io->ask('password')
-                ]
-            ]
-        ]);
     }
 }

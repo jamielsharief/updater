@@ -34,12 +34,19 @@ class UpdateCommand extends ApplicationCommand
 
         $this->addOption('all', [
             'description' => 'Downloads and processes all available updates',
-            'type' => 'boolean'
+            'type' => 'boolean',
+            'short' => 'a'
         ]);
 
         $this->addOption('dev', [
             'description' => 'Updates from the development branch',
             'type' => 'boolean'
+        ]);
+
+        $this->addOption('no-interaction', [
+            'description' => 'Do not ask any interactive questions',
+            'type' => 'boolean',
+            'short' => 'n'
         ]);
     }
 

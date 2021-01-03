@@ -66,7 +66,7 @@ class InitCommandTest extends OriginTestCase
         $json = '{"url":"http://127.0.0.1:8000","package":"jamielsharief/blockchain","scripts":{"before":[],"after":[]}}';
         file_put_contents($directory. '/updater.json', $json);
 
-        $this->exec("init {$directory} --version 0.1.0", ['foo','bar']);
+        $this->exec("init {$directory} --version 0.1.0", ['foo','bar','user','1234']);
 
         $this->assertOutputContains('Updater initialized');
         $this->assertErrorContains('Authentication required');
@@ -74,6 +74,6 @@ class InitCommandTest extends OriginTestCase
         $authPath = $directory. '/auth.json';
         
         $this->assertFileExists($authPath);
-        $this->assertEquals('d6af7cf24862273736825c1ce495ffb3', hash_file('md5', $authPath));
+        $this->assertEquals('725395d6da46b0d83e666194a74011b2', hash_file('md5', $authPath));
     }
 }
