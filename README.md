@@ -23,7 +23,7 @@ $ updater update
 - Checking for updates company/app (1.0.2)
 - Downloading company/app (1.0.3)
 - Running before scripts:
- > bin/console backup
+ > bin/console db:backup
 - Extracting company/app (1.0.3)
 - Running after scripts:
  > composer update
@@ -117,7 +117,7 @@ To update your application just run the following command, which will run all up
 $ updater update
 ```
 
-If you want to run all available updates in the current major release
+If you want to run all available updates in the current major version
 
 ```bash
 $ updater update --all
