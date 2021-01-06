@@ -24,7 +24,7 @@ jobs:
           - "7.4"
           - "8.0"
     steps:
-      - name: Checkout source code
+      - name: Checkout Source Code
         uses: actions/checkout@v2
       - name: Install PHP
         uses: "shivammathur/setup-php@v2"
