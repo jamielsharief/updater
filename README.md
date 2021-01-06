@@ -32,20 +32,26 @@ $ updater update
 
 ## Installation
 
+
+### Download the Source Code
+
 Download the source and build `updater` application.
 
 ```bash
 $ git clone http://github.com/jamielsharief/updater updater
+$ cd updater
+$ composer install
 ```
 
 Now build the PHAR, this will create `bin/updater.phar`, you can copy this into your application `bin` folder.
 
 ```bash
-$ cd updater
 $ php -d phar.readonly=Off bin/build
 ```
 
-To install globally:
+### Copy globally
+
+To install globally copy
 
 ```bash
 $ cp bin/updater.phar /usr/local/bin/updater
@@ -142,17 +148,25 @@ You can test using the `dev-master` or `dev-main` branch and the lock file will 
 $ updater upgrade --dev
 ```
 
-## Demonstration
+## Demo
 
-> This demo assumes you have downloaded the source of `updater` and you are going to download the source of `updater-demo` and place this in the demo subfolder.
+Download the source and dependencies
 
-First download the source for the `updater` and run `composer install`, then download the `updater-demo` into the `demo` directory.
+```bash
+$ git clone http://github.com/jamielsharief/updater updater
+$ cd updater
+$ composer install
+```
+
+Now download the sample project into a sub folder, e.g. `updater/demo` so you can run updater without
+building the PHAR file.
 
 ```bash
 $ composer create-project jamielsharief/updater-demo:0.1.0 demo
 ```
 
-Create `updater.json` in `demo` folder, set the URL to the repository.
+The first version does not have the `updater.json`, so create this in `demo` folder, and set the
+URL to the repository.
 
 ```json
 {
@@ -177,7 +191,9 @@ Then run the `update` command to get the next available update
 $ bin/updater update demo
 ```
 
-You can also run the upgrade as well 
+Now, you can run it a few times or use the `--all`.
+
+Once you are ready to upgrade the application to the next major version, run
 
 ```bash
 $ bin/updater upgrade demo
