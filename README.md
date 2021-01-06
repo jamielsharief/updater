@@ -1,7 +1,7 @@
 # Updater (beta)
 
 ![license](https://img.shields.io/badge/license-Apache%202-blue)
-[![build status](https://travis-ci.com/jamielsharief/updater.svg?branch=main)](https://travis-ci.com/jamielsharief/updater)
+[![build](https://github.com/jamielsharief/updater/workflows/CI/badge.svg)](https://github.com/jamielsharief/updater/actions)
 [![coverage status](https://coveralls.io/repos/github/jamielsharief/updater/badge.svg?branch=main)](https://coveralls.io/github/jamielsharief/updater?branch=main)
 
 Updater is an application updater, it will update and upgrade your deployed applications to the latest release running any tasks before and after each update that are specific to each each release.

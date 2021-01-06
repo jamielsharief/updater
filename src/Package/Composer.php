@@ -1,7 +1,7 @@
 <?php
 /**
  * Updater
- * Copyright 2020 Jamiel Sharief.
+ * Copyright 2020-2021 Jamiel Sharief.
  *
  * Licensed under The Apache License 2.0
  * The above copyright notice and this permission notice shall be included in all copies or substantial
@@ -122,8 +122,8 @@ class Composer
     protected function authFiles(): array
     {
         return  [
-            $this->homeDirectory() . '/.composer/auth.json',
-            $this->homeDirectory() . '/.config/.composer/auth.json',
+            $this->homeDirectory() . '/.composer/auth.json', // DEFAULT
+            $this->homeDirectory() . '/.config/composer/auth.json', // GLOBAL
             $this->workingDirectory . '/auth.json'
         ];
     }

@@ -26,7 +26,7 @@ class ArchiveTest extends TestCase
         $zip = new Zip();
         $zip->create($tmpFile);
         $zip->add(__FILE__);
-        $zip->save();
+        $zip->close();
         $archive = new Archive($tmpFile);
 
         $this->expectException(UpdaterException::class);
@@ -43,7 +43,7 @@ class ArchiveTest extends TestCase
         $zip = new Zip();
         $zip->create($tmpFile);
         $zip->add($configFile);
-        $zip->save();
+        $zip->close();
         $archive = new Archive($tmpFile);
 
         $this->expectException(UpdaterException::class);

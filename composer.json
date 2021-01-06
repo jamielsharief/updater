@@ -23,16 +23,16 @@
     "require": {
         "php": ">=7.3.0",
         "ext-zip": "*",
-        "originphp/http-client": "^2.0",
-        "originphp/validation": "^1.5",
-        "originphp/filesystem": "^2.0",
-        "originphp/zip": "^1.3",
+        "originphp/http-client": "^3",
+        "originphp/validation": "^2",
+        "originphp/filesystem": "^3.0",
+        "originphp/zip": "^2",
         "originphp/console": "^3.11"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.2",
-        "phpstan/phpstan": "^0.12.52",
-        "originphp/test-suite": "^3.9"
+        "phpstan/phpstan": "^0.12.64",
+        "originphp/test-suite": "^3.11"
     },
     "bin": [
         "bin/updater"
