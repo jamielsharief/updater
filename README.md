@@ -32,6 +32,7 @@ $ updater update
 
 ## Installation
 
+You can build from source or download `updater` from the [releases](https://github.com/jamielsharief/updater/releases) section.
 
 ### Download the Source Code
 
@@ -197,34 +198,4 @@ Once you are ready to upgrade the application to the next major version, run
 
 ```bash
 $ bin/updater upgrade demo
-```
-
-## Development/Testing
-
-To setup for testing you need have [Docker](https://docs.docker.com/get-docker/) installed. When you build the container it will create a small web sever with the satis repository.
-
-```bash
-$ cd tests/TestServer
-$ docker build -t satis-dev .
-```
-
-Anytime you want to fire up the Docker container, which will make `http://localhost:8000` available.
-
-```bash
-$ docker run -d -p 8000:80 satis-dev
-```
-
-If you goto `http://localhost:8000` you should see a repository page.
-
-
-Fetch the development dependencies
-
-```bash
-$ composer update --dev
-```
-
-To run the `PHPUnit` tests
-
-```bash
-$ vendor/bin/phpunit
 ```

@@ -1,6 +1,6 @@
 # Satis Server
 
-Build the test satis server
+To setup for testing you need have [Docker](https://docs.docker.com/get-docker/) installed. When you build the container it will create a small web sever with the satis repository.
 
 ```bash
 $ cd tests/TestServer
