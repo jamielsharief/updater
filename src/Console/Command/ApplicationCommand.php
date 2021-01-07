@@ -331,7 +331,7 @@ class ApplicationCommand extends Command
     protected function getVersion(Package $package): string
     {
         if ($this->options('version') && ! in_array($this->options('version'), $package->releases())) {
-            $this->throwError('Invalid version', sprintf('The package %s does not exist', $this->options('version')));
+            $this->throwError('Invalid version', sprintf('The version %s does not exist', $this->options('version')));
         }
 
         return $this->options('version');
