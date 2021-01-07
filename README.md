@@ -126,8 +126,7 @@ $ updater update --all
 
 > You can use the `--verbose` option to see the output of the scripts, if any
 
-If you want to test the update using a specific version or branch, this will use the specific version and it will
-not update the lock file.
+If you want to test the update using a specific composer version (including development branch), this will use the specific version and it will not update the lock file.
 
 ```bash
 $ updater update --version dev-master
@@ -145,8 +144,7 @@ $ updater upgrade
 
 > You can use the `--verbose` option to see the output of the scripts, if any
 
-If you want to test the upgrade using a specific version or branch, this will use the specific version and it will
-not update the lock file.
+If you want to test the upgrade using a specific composer version (including development branch), this will use the specific version and it will not update the lock file.
 
 ```bash
 $ updater upgrade --version dev-master
