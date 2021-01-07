@@ -25,9 +25,10 @@ class UpgradeCommand extends ApplicationCommand
             'type' => 'string',
         ]);
 
-        $this->addOption('dev', [
-            'description' => 'Upgrades from the development branch',
-            'type' => 'boolean'
+        $this->addOption('version', [
+            'description' => 'Updates from a specific version',
+            'type' => 'string',
+            'short' => 'v'
         ]);
     }
 
@@ -52,12 +53,8 @@ class UpgradeCommand extends ApplicationCommand
             $this->exit();
         }
 
-        $nextMajorVersion = $package->nextMajorVersion($lock['version']);
-
-        if (! $nextVersion && $this->options('dev')) {
-            $nextMajorVersion = $package->dev();
-        }
-
+        $nextMajorVersion = $this->wantsVersion() ? $this->getVersion($package) : $package->nextMajorVersion($lock['version']);
+ 
         if (! $nextMajorVersion) {
             $this->io->nl();
             $this->io->warning('No upgrades found');

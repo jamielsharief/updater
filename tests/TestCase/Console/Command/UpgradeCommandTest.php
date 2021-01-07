@@ -103,7 +103,7 @@ class UpgradeCommandTest extends OriginTestCase
         $lockFile = new Json("{$directory}/updater.lock");
         $this->assertEquals('1.0.0', $lockFile->read()['version']);
 
-        $this->exec("upgrade {$directory} --dev");
+        $this->exec("upgrade {$directory} --version dev-main");
         $this->assertExitSuccess();
         $this->assertOutputContains('<green>Downloading</green> <white>jamielsharief/updater-demo</white> (<yellow>dev-main</yellow>)');
         $this->assertOutputContains('Application upgraded');

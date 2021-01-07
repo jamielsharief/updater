@@ -19,6 +19,7 @@ $ updater update
   \____/ .___/\__,_/\__,_/\__/\___/_/
       /_/
 
+version 0.1.0
 
 - Checking for updates company/app (1.0.2)
 - Downloading company/app (1.0.3)
@@ -150,6 +151,8 @@ $ updater upgrade --dev
 ```
 
 ## Demo
+
+> Building the PHAR will fail if you do not remove this directory when you have finished.
 
 Download the source and dependencies
 

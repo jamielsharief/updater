@@ -38,9 +38,10 @@ class UpdateCommand extends ApplicationCommand
             'short' => 'a'
         ]);
 
-        $this->addOption('dev', [
-            'description' => 'Updates from the development branch',
-            'type' => 'boolean'
+        $this->addOption('version', [
+            'description' => 'Updates from a specific version',
+            'type' => 'string',
+            'short' => 'v'
         ]);
 
         $this->addOption('no-interaction', [
@@ -89,12 +90,8 @@ class UpdateCommand extends ApplicationCommand
         $this->status('Checking for updates', $updater->package, $lock['version']);
         $package = $this->fetchPackageInfo($updater->package);
 
-        $nextVersion = $package->nextVersion($lock['version']);
-
-        if (! $nextVersion && $this->options('dev')) {
-            $nextVersion = $package->dev();
-        }
-        
+        $nextVersion = $this->wantsVersion() ? $this->getVersion($package) : $package->nextVersion($lock['version']);
+      
         if (! $nextVersion) {
             return false;
         }

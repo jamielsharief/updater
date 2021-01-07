@@ -140,7 +140,7 @@ class UpdateCommandTest extends OriginTestCase
         $lockFile = new Json("{$directory}/updater.lock");
         $this->assertEquals('0.3.0', $lockFile->read()['version']);
         
-        $this->exec("update {$directory} --dev");
+        $this->exec("update {$directory} --version dev-main");
         $this->assertExitSuccess();
         $this->assertOutputContains('<green>Downloading</green> <white>jamielsharief/updater-demo</white> (<yellow>dev-main</yellow>)');
         $this->assertOutputContains('Processed 1 updates');

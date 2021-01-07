@@ -35,6 +35,14 @@ $phar->addFromString(
     preg_replace('/^#!\/usr\/bin\/env php\R/', '', file_get_contents($buildRoot . '/bin/updater'))
 );
 
+// Modify the version
+$version = shell_exec('git describe --tags --exact-match HEAD 2>&1');
+$version = preg_match('/^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9a-z-])+)?$/i', $version) ? $version : 'unkown';
+$phar->addFromString(
+    'src/Console/Command/ApplicationCommand.php',
+    preg_replace('/{{updater_version}}/', $version, file_get_contents($buildRoot . '/src/Console/Command/ApplicationCommand.php'))
+);
+
 $phar->setStub("#!/usr/bin/env php\n". $phar->createDefaultStub('bin/updater'));
 $phar->stopBuffering();
 

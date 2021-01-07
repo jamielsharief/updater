@@ -26,6 +26,8 @@ use Origin\HttpClient\Exception\ClientErrorException;
 
 class ApplicationCommand extends Command
 {
+    const VERSION = '{{updater_version}}';
+
     /**
      * @var string
      */
@@ -75,6 +77,7 @@ class ApplicationCommand extends Command
     protected function startup(): void
     {
         $this->io->out('<yellow>' . $this->banner() . '</yellow>');
+        $this->io->out('version <yellow>'  . $this->updaterVersion() . '</yellow>');
         
         $workingDirectory = $this->arguments('working-directory');
 
@@ -85,6 +88,14 @@ class ApplicationCommand extends Command
         $this->workingDirectory = $workingDirectory ?? getcwd();
 
         $this->lockFile = new Json($this->lockFilePath());
+    }
+
+    /**
+     * @return string
+     */
+    private function updaterVersion(): string
+    {
+        return self::VERSION === '{{updater_version}}' ? 'dev' : self::VERSION;
     }
 
     /**
@@ -188,7 +199,7 @@ class ApplicationCommand extends Command
         $archive->close();
         $archive->delete();
 
-        if ($this->options('dev') === false) {
+        if (! $this->wantsVersion()) {
             $this->io->out('- Updating lock file');
             $this->updateLockFile($archive->version());
         }
@@ -301,6 +312,29 @@ class ApplicationCommand extends Command
         ]);
 
         $this->repository->setCredentials($username, $password);
+    }
+
+    /**
+     * @return boolean
+     */
+    protected function wantsVersion(): bool
+    {
+        return ! empty($this->options('version'));
+    }
+
+    /**
+     * Checks if the version supplied by the version option is in the package if so it returns it.
+     *
+     * @param \Updater\Packge\Package $package
+     * @return string
+     */
+    protected function getVersion(Package $package): string
+    {
+        if ($this->options('version') && ! in_array($this->options('version'), $package->releases())) {
+            $this->throwError('Invalid version', sprintf('The package %s does not exist', $this->options('version')));
+        }
+
+        return $this->options('version');
     }
 
     /**
