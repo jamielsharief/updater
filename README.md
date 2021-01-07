@@ -126,10 +126,11 @@ $ updater update --all
 
 > You can use the `--verbose` option to see the output of the scripts, if any
 
-You can test using the `dev-master` or `dev-main` branch and the lock file will not be adjusted. You can run this as many times as you need.
+If you want to test the update using a specific version or branch, this will use the specific version and it will
+not update the lock file.
 
 ```bash
-$ updater update --dev
+$ updater update --version dev-master
 ```
 
 ### Upgrading
@@ -144,10 +145,11 @@ $ updater upgrade
 
 > You can use the `--verbose` option to see the output of the scripts, if any
 
-You can test using the `dev-master` or `dev-main` branch and the lock file will not be adjusted. You can run this as many times as you need.
+If you want to test the upgrade using a specific version or branch, this will use the specific version and it will
+not update the lock file.
 
 ```bash
-$ updater upgrade --dev
+$ updater upgrade --version dev-master
 ```
 
 ## Demo
