@@ -1,4 +1,4 @@
-# Updater (beta)
+# Updater
 
 ![license](https://img.shields.io/badge/license-Apache%202-blue)
 [![build](https://github.com/jamielsharief/updater/workflows/CI/badge.svg)](https://github.com/jamielsharief/updater/actions)
