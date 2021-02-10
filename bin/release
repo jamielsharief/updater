@@ -26,4 +26,4 @@ echo ${RELEASE_VERSION} > version.txt
 git add version.txt
 git commit -m "Update version number to $RELEASE_VERSION";
 git tag -am $RELEASE_VERSION $RELEASE_VERSION
-git push origin master --tags
+git push origin main --tags
