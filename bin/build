@@ -36,12 +36,9 @@ $phar->addFromString(
 );
 
 // Modify the version
-$version = shell_exec('git describe --tags --exact-match HEAD 2>&1');
-$version = preg_match('/^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9a-z-])+)?$/i', $version) ? $version : 'unkown';
-$phar->addFromString(
-    'src/Console/Command/ApplicationCommand.php',
-    preg_replace('/{{updater_version}}/', $version, file_get_contents($buildRoot . '/src/Console/Command/ApplicationCommand.php'))
-);
+$version = shell_exec('git describe --abbrev=0 HEAD 2>&1');
+$version = preg_match('/^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9a-z-])+)?$/i', trim($version)) ? $version : 'unkown';
+$phar->addFromString('version.txt', $version);
 
 $phar->setStub("#!/usr/bin/env php\n". $phar->createDefaultStub('bin/updater'));
 $phar->stopBuffering();
@@ -50,4 +47,6 @@ $phar->compressFiles(Phar::GZ);
 
 chmod($output, 0755);
 
-echo('[OK] bin/updater.phar created' . PHP_EOL);
+shell_exec('composer update -q'); // restore dependencies
+
+echo('[OK] bin/updater.phar v'. $version . PHP_EOL);
