@@ -26,8 +26,6 @@ use Origin\HttpClient\Exception\ClientErrorException;
 
 class ApplicationCommand extends Command
 {
-    const VERSION = '{{updater_version}}';
-
     /**
      * @var string
      */
@@ -95,7 +93,7 @@ class ApplicationCommand extends Command
      */
     private function updaterVersion(): string
     {
-        return self::VERSION === '{{updater_version}}' ? 'dev' : self::VERSION;
+        return file_get_contents(ROOT . '/version.txt');
     }
 
     /**
